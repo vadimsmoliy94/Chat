@@ -1,18 +1,49 @@
-const app = require('express')();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const port = process.env.PORT || 3000;
+const app = require('express')()
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
+// app.get('/', (req, res) => {
+//     res.sendFile(__dirname + '/index.html');
+// });
+let users = ['bot']
+
+// app.use(cors()) // can be not need
+
+// app.get('/', (req, res) => {
+//   console.log(req.query.userName)
+//   res.send('Hello World!')
+// })
 
 io.on('connection', (socket) => {
-    socket.on('chat message', msg => {
-        io.emit('chat message', msg);
-    });
-});
+    // console.log('a user connected', socket.handshake.query.userName)
 
-http.listen(port, () => {
-    console.log(`Socket.IO server running at http://localhost:${port}/`);
-});
+    socket.on('initUser', (userName) => {
+        if (socket.username === userName) {
+            return socket.emit('userInitialized', userName)
+        }
+
+        if (users.includes(userName)) {
+            return socket.emit('nameIsBusy')
+        }
+
+        socket.username = userName
+        users.push(userName)
+
+        socket.emit('userInitialized', userName)
+        io.emit('usersChanged', users)
+    })
+
+    socket.on('disconnect', () => {
+        users = users.filter((item) => item !== socket.username)
+
+        io.emit('usersChanged', users)
+    })
+
+    socket.on('newMessage', (msg) => {
+        io.emit('newMessage', msg)
+    })
+})
+
+http.listen(3000, () => {
+    console.log('listening on *:3000')
+})

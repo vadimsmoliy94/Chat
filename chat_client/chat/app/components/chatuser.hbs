@@ -2,9 +2,10 @@
 
 </div>
 <Users></Users>
-<form {{on "submit" this.inputMes}}>
+
+<form {{on 'submit' this.onInputChange }}>
     <label>Введіть повідомлення</label>
-    <input type="text">
+    <input type="text" value={{this.inputText}}>
 
     <button type="submit">Відправити</button>
 </form>

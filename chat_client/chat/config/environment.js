@@ -8,6 +8,7 @@ module.exports = function (environment) {
     locationType: 'auto',
     EmberENV: {
       FEATURES: {
+
         // Here you can enable experimental features on an ember canary build
         // e.g. EMBER_NATIVE_DECORATOR_SUPPORT: true
       },
@@ -45,6 +46,7 @@ module.exports = function (environment) {
 
   if (environment === 'production') {
     // here you can enable a production-specific feature
+
   }
 
   return ENV;
